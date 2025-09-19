@@ -44,34 +44,29 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        // Create Students
-        Student student1 = new Student("Alice");
-        Student student2 = new Student("Bob");
+        // Create objects of Student, Teacher, Staff
+        Student student1 = new Student("Alice", "Grade 10");
+        Teacher teacher1 = new Teacher("Dr. Smith", "Mathematics");
+        Staff staff1 = new Staff("John Doe", "Administrator");
 
-        // Create Courses
+        // Create Course
         Course course1 = new Course("Mathematics");
-        Course course2 = new Course("Science");
 
-        // Display for reference
-        student1.displayStudent();
-        student2.displayStudent();
+        // Call displayDetails() on each
+        System.out.println("--- Person Hierarchy Demo ---");
+        student1.displayDetails();
+        System.out.println();
+        teacher1.displayDetails();
+        System.out.println();
+        staff1.displayDetails();
+        System.out.println();
         course1.displayCourse();
-        course2.displayCourse();
 
-        // Attendance Log
+        // Attendance Log using student.getId()
         List<AttendanceRecord> attendanceLog = new ArrayList<>();
-
-        // Create Attendance Records
-        AttendanceRecord record1 = new AttendanceRecord(student1.getStudentId(), course1.getCourseId(), "Present");
-        AttendanceRecord record2 = new AttendanceRecord(student2.getStudentId(), course2.getCourseId(), "Absent");
-        AttendanceRecord record3 = new AttendanceRecord(student1.getStudentId(), course2.getCourseId(), "Late"); // Invalid
-
-        // Add to list
+        AttendanceRecord record1 = new AttendanceRecord(student1.getId(), course1.getCourseId(), "Present");
         attendanceLog.add(record1);
-        attendanceLog.add(record2);
-        attendanceLog.add(record3);
 
-        // Display all records
         System.out.println("\n--- Attendance Log ---");
         for (AttendanceRecord record : attendanceLog) {
             record.displayRecord();
