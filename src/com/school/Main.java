@@ -40,36 +40,38 @@
 package com.school;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        // Create objects of Student, Teacher, Staff
-        Student student1 = new Student("Alice", "Grade 10");
-        Teacher teacher1 = new Teacher("Dr. Smith", "Mathematics");
-        Staff staff1 = new Staff("John Doe", "Administrator");
+        // Create and populate students
+        ArrayList<Student> students = new ArrayList<>();
+        students.add(new Student("Alice", "Grade 10"));
+        students.add(new Student("Bob", "Grade 11"));
+        students.add(new Student("Charlie", "Grade 9"));
 
-        // Create Course
-        Course course1 = new Course("Mathematics");
+        // Create and populate courses
+        ArrayList<Course> courses = new ArrayList<>();
+        courses.add(new Course("Mathematics"));
+        courses.add(new Course("Physics"));
+        courses.add(new Course("Chemistry"));
 
-        // Call displayDetails() on each
-        System.out.println("--- Person Hierarchy Demo ---");
-        student1.displayDetails();
-        System.out.println();
-        teacher1.displayDetails();
-        System.out.println();
-        staff1.displayDetails();
-        System.out.println();
-        course1.displayCourse();
+        // Create and populate attendance records
+        ArrayList<AttendanceRecord> records = new ArrayList<>();
+        records.add(new AttendanceRecord(students.get(0).getId(), courses.get(0).getCourseId(), "Present"));
+        records.add(new AttendanceRecord(students.get(1).getId(), courses.get(1).getCourseId(), "Absent"));
+        records.add(new AttendanceRecord(students.get(2).getId(), courses.get(2).getCourseId(), "Present"));
 
-        // Attendance Log using student.getId()
-        List<AttendanceRecord> attendanceLog = new ArrayList<>();
-        AttendanceRecord record1 = new AttendanceRecord(student1.getId(), course1.getCourseId(), "Present");
-        attendanceLog.add(record1);
+        // Create FileStorageService instance
+        FileStorageService storageService = new FileStorageService();
 
-        System.out.println("\n--- Attendance Log ---");
-        for (AttendanceRecord record : attendanceLog) {
-            record.displayRecord();
-        }
+        // Save data to files
+        storageService.saveData(students, "students.txt");
+        storageService.saveData(courses, "courses.txt");
+        storageService.saveData(records, "attendance_log.txt");
+
+        System.out.println("Data saved successfully to files:");
+        System.out.println("- students.txt");
+        System.out.println("- courses.txt");
+        System.out.println("- attendance_log.txt");
     }
 }
