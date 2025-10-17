@@ -1,13 +1,13 @@
 package com.school;
 
 public class AttendanceRecord implements Storable {
-    private int studentId;
-    private int courseId;
+    private Student student;
+    private Course course;
     private String status;
 
-    public AttendanceRecord(int studentId, int courseId, String status) {
-        this.studentId = studentId;
-        this.courseId = courseId;
+    public AttendanceRecord(Student student, Course course, String status) {
+        this.student = student;
+        this.course = course;
 
         // Validation
         if (status.equalsIgnoreCase("Present") || status.equalsIgnoreCase("Absent")) {
@@ -19,12 +19,12 @@ public class AttendanceRecord implements Storable {
     }
 
     // Getters
-    public int getStudentId() {
-        return studentId;
+    public Student getStudent() {
+        return student;
     }
 
-    public int getCourseId() {
-        return courseId;
+    public Course getCourse() {
+        return course;
     }
 
     public String getStatus() {
@@ -32,13 +32,13 @@ public class AttendanceRecord implements Storable {
     }
 
     public void displayRecord() {
-        System.out.println("AttendanceRecord => Student ID: " + studentId + 
-                           ", Course ID: " + courseId + 
+        System.out.println("Student: " + student.getName() + 
+                           ", Course: " + course.getCourseName() + 
                            ", Status: " + status);
     }
 
     @Override
     public String toDataString() {
-        return studentId + "," + courseId + "," + status;
+        return student.getId() + "," + course.getCourseId() + "," + status;
     }
 }
