@@ -52,59 +52,53 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        // Create and populate students
-        ArrayList<Student> students = new ArrayList<>();
-        students.add(new Student("Alice", "Grade 10"));
-        students.add(new Student("Bob", "Grade 11"));
-        students.add(new Student("Charlie", "Grade 9"));
-
-        // Create teachers and staff
-        Teacher teacher1 = new Teacher("Dr. Smith", "Mathematics");
-        Teacher teacher2 = new Teacher("Ms. Johnson", "Physics");
-        Staff staff1 = new Staff("John Doe", "Librarian");
-
-        // Create and populate courses
-        ArrayList<Course> courses = new ArrayList<>();
-        courses.add(new Course("Mathematics"));
-        courses.add(new Course("Physics"));
-        courses.add(new Course("Chemistry"));
-
-        // Create and populate attendance records with objects
-        ArrayList<AttendanceRecord> records = new ArrayList<>();
-        records.add(new AttendanceRecord(students.get(0), courses.get(0), "Present"));
-        records.add(new AttendanceRecord(students.get(1), courses.get(1), "Absent"));
-        records.add(new AttendanceRecord(students.get(2), courses.get(2), "Present"));
-
-        // Demonstrate polymorphism with Person list
-        List<Person> people = new ArrayList<>();
-        people.addAll(students);
-        people.add(teacher1);
-        people.add(teacher2);
-        people.add(staff1);
-
-        displaySchoolDirectory(people);
-
-        // Display attendance log
-        System.out.println("=== Attendance Log ===");
-        for (AttendanceRecord record : records) {
-            record.displayRecord();
-        }
-
-        // Create FileStorageService instance
+        // Create FileStorageService and AttendanceService instances
         FileStorageService storageService = new FileStorageService();
+        AttendanceService attendanceService = new AttendanceService(storageService);
 
-        // Filter students for saving (using instanceof)
-        List<Student> storableStudents = new ArrayList<>();
-        for (Person person : people) {
-            if (person instanceof Student) {
-                storableStudents.add((Student) person);
-            }
-        }
+        // Create and populate students (allStudents)
+        ArrayList<Student> allStudents = new ArrayList<>();
+        allStudents.add(new Student("Alice", "Grade 10"));
+        allStudents.add(new Student("Bob", "Grade 11"));
+        allStudents.add(new Student("Charlie", "Grade 9"));
 
-        // Save data to files
-        storageService.saveData(storableStudents, "students.txt");
-        storageService.saveData(courses, "courses.txt");
-        storageService.saveData(records, "attendance_log.txt");
+        // Create and populate courses (allCourses)
+        ArrayList<Course> allCourses = new ArrayList<>();
+        allCourses.add(new Course("Mathematics"));
+        allCourses.add(new Course("Physics"));
+        allCourses.add(new Course("Chemistry"));
+
+        // Demonstrate overloaded markAttendance methods
+        System.out.println("=== Marking Attendance Using Different Methods ===");
+        
+        // Method 1: Using Student and Course objects
+        attendanceService.markAttendance(allStudents.get(0), allCourses.get(0), "Present");
+        attendanceService.markAttendance(allStudents.get(1), allCourses.get(1), "Absent");
+        
+        // Method 2: Using IDs with lookup
+        attendanceService.markAttendance(allStudents.get(2).getId(), allCourses.get(2).getCourseId(), "Present", allStudents, allCourses);
+        attendanceService.markAttendance(allStudents.get(0).getId(), allCourses.get(1).getCourseId(), "Present", allStudents, allCourses);
+
+        // Demonstrate overloaded displayAttendanceLog methods
+        System.out.println("\n=== Displaying Attendance Using Different Methods ===");
+        
+        // Display all records
+        attendanceService.displayAttendanceLog();
+        
+        // Display records for specific student
+        System.out.println();
+        attendanceService.displayAttendanceLog(allStudents.get(0));
+        
+        // Display records for specific course
+        System.out.println();
+        attendanceService.displayAttendanceLog(allCourses.get(1));
+
+        // Save attendance data
+        attendanceService.saveAttendanceData();
+        
+        // Save other data
+        storageService.saveData(allStudents, "students.txt");
+        storageService.saveData(allCourses, "courses.txt");
 
         System.out.println("\nData saved successfully to files:");
         System.out.println("- students.txt");
