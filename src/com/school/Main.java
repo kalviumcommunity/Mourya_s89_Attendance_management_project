@@ -39,12 +39,12 @@
 // }
 package com.school;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
-    public static void displaySchoolDirectory(List<Person> people) {
+    public static void displaySchoolDirectory(RegistrationService regService) {
         System.out.println("\n=== School Directory ===");
+        List<Person> people = regService.getAllPeople();
         for (Person person : people) {
             person.displayDetails();
             System.out.println();
@@ -52,32 +52,44 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        // Create FileStorageService and AttendanceService instances
+        // Create service instances with dependency injection
         FileStorageService storageService = new FileStorageService();
-        AttendanceService attendanceService = new AttendanceService(storageService);
+        RegistrationService registrationService = new RegistrationService(storageService);
+        AttendanceService attendanceService = new AttendanceService(storageService, registrationService);
 
-        // Create and populate students (allStudents)
-        ArrayList<Student> allStudents = new ArrayList<>();
-        allStudents.add(new Student("Alice", "Grade 10"));
-        allStudents.add(new Student("Bob", "Grade 11"));
-        allStudents.add(new Student("Charlie", "Grade 9"));
+        // Register students using RegistrationService
+        registrationService.registerStudent("Alice", "Grade 10");
+        registrationService.registerStudent("Bob", "Grade 11");
+        registrationService.registerStudent("Charlie", "Grade 9");
 
-        // Create and populate courses (allCourses)
-        ArrayList<Course> allCourses = new ArrayList<>();
-        allCourses.add(new Course("Mathematics"));
-        allCourses.add(new Course("Physics"));
-        allCourses.add(new Course("Chemistry"));
+        // Register teachers using RegistrationService
+        registrationService.registerTeacher("Dr. Smith", "Mathematics");
+        registrationService.registerTeacher("Ms. Johnson", "Physics");
+
+        // Register staff using RegistrationService
+        registrationService.registerStaff("John Doe", "Librarian");
+        registrationService.registerStaff("Jane Wilson", "Administrator");
+
+        // Create courses using RegistrationService
+        registrationService.createCourse("Mathematics");
+        registrationService.createCourse("Physics");
+        registrationService.createCourse("Chemistry");
+
+        // Display school directory using polymorphism
+        displaySchoolDirectory(registrationService);
 
         // Demonstrate overloaded markAttendance methods
         System.out.println("=== Marking Attendance Using Different Methods ===");
         
         // Method 1: Using Student and Course objects
-        attendanceService.markAttendance(allStudents.get(0), allCourses.get(0), "Present");
-        attendanceService.markAttendance(allStudents.get(1), allCourses.get(1), "Absent");
+        List<Student> students = registrationService.getStudents();
+        List<Course> courses = registrationService.getCourses();
+        attendanceService.markAttendance(students.get(0), courses.get(0), "Present");
+        attendanceService.markAttendance(students.get(1), courses.get(1), "Absent");
         
-        // Method 2: Using IDs with lookup
-        attendanceService.markAttendance(allStudents.get(2).getId(), allCourses.get(2).getCourseId(), "Present", allStudents, allCourses);
-        attendanceService.markAttendance(allStudents.get(0).getId(), allCourses.get(1).getCourseId(), "Present", allStudents, allCourses);
+        // Method 2: Using IDs with lookup (now handled by RegistrationService)
+        attendanceService.markAttendance(students.get(2).getId(), courses.get(2).getCourseId(), "Present");
+        attendanceService.markAttendance(students.get(0).getId(), courses.get(1).getCourseId(), "Present");
 
         // Demonstrate overloaded displayAttendanceLog methods
         System.out.println("\n=== Displaying Attendance Using Different Methods ===");
@@ -87,21 +99,20 @@ public class Main {
         
         // Display records for specific student
         System.out.println();
-        attendanceService.displayAttendanceLog(allStudents.get(0));
+        attendanceService.displayAttendanceLog(students.get(0));
         
         // Display records for specific course
         System.out.println();
-        attendanceService.displayAttendanceLog(allCourses.get(1));
+        attendanceService.displayAttendanceLog(courses.get(1));
 
-        // Save attendance data
+        // Save all data using respective services
+        registrationService.saveAllRegistrations();
         attendanceService.saveAttendanceData();
-        
-        // Save other data
-        storageService.saveData(allStudents, "students.txt");
-        storageService.saveData(allCourses, "courses.txt");
 
         System.out.println("\nData saved successfully to files:");
         System.out.println("- students.txt");
+        System.out.println("- teachers.txt");
+        System.out.println("- staff.txt");
         System.out.println("- courses.txt");
         System.out.println("- attendance_log.txt");
     }
